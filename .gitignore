@@ -1,4 +1,15 @@
+# dependencies
 node_modules/
-dist/
-_local/
 
+# build output
+dist/
+
+# logs
+*.log
+
+# environment
+.env
+
+# editor & OS
+.vscode/
+.DS_Store
