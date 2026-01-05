@@ -52,8 +52,8 @@ export const eventsRoute = new Hono()
         dateTime: body.dateTime,
         location: body.location,
         status: body.status || "UPCOMING",
-        category: body.category,
-        type: body.type,
+        category: body.category || "SEMINAR",
+        type: body.type || "OFFLINE",
       },
     });
 
