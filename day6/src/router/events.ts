@@ -1,11 +1,23 @@
 import { Hono } from "hono";
 import { prisma } from "../utils/prisma.js";
 import { zValidator } from "@hono/zod-validator";
-import { createEventValidation } from "../validation/event-validation.js";
+import {
+  createEventValidation,
+  updateEventValidation,
+  eventQueryValidation,
+} from "../validation/event-validation.js";
 
 export const eventsRoute = new Hono()
-  .get("/", async (c) => {
+  .get("/", zValidator("query", eventQueryValidation), async (c) => {
+    const query = c.req.valid("query");
+
+    const where: any = {};
+    if (query.status) where.status = query.status;
+    if (query.category) where.category = query.category;
+    if (query.type) where.type = query.type;
+
     const events = await prisma.event.findMany({
+      where,
       include: {
         participants: true,
       },
@@ -39,14 +51,17 @@ export const eventsRoute = new Hono()
         description: body.description,
         dateTime: body.dateTime,
         location: body.location,
+        status: body.status || "UPCOMING",
+        category: body.category,
+        type: body.type,
       },
     });
 
     return c.json({ event: newEvent }, 201);
   })
-  .patch("/:id", async (c) => {
+  .patch("/:id", zValidator("json", updateEventValidation), async (c) => {
     const id = c.req.param("id");
-    const body = await c.req.json();
+    const body = c.req.valid("json");
 
     const event = await prisma.event.findUnique({
       where: { id },
@@ -57,14 +72,15 @@ export const eventsRoute = new Hono()
     }
 
     const updatedEvent = await prisma.event.update({
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
-        name: body.name,
-        description: body.description,
-        dateTime: body.dateTime,
-        location: body.location,
+        ...(body.name && { name: body.name }),
+        ...(body.description && { description: body.description }),
+        ...(body.dateTime && { dateTime: body.dateTime }),
+        ...(body.location && { location: body.location }),
+        ...(body.status && { status: body.status }),
+        ...(body.category && { category: body.category }),
+        ...(body.type && { type: body.type }),
       },
     });
 

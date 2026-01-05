@@ -13,12 +13,35 @@ datasource db {
   provider = "sqlite"
 }
 
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum EventCategory {
+  SEMINAR
+  WORKSHOP
+  CONFERENCE
+  MEETUP
+}
+
+enum EventType {
+  ONLINE
+  OFFLINE
+  HYBRID
+}
+
 model Event {
   id           String        @id @default(cuid())
   name         String
   description  String
   location     String
   dateTime     String
+  status       EventStatus    @default(UPCOMING)
+  category     EventCategory  @default(SEMINAR)
+  type         EventType      @default(OFFLINE)
   participants Participant[]
 }
 
