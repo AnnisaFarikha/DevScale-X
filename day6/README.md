@@ -140,14 +140,16 @@ Hal ini mencegah data tidak valid masuk ke database.
 ```bash
 pnpm install
 ```
-## Generate Prisma Client
+### Generate Prisma Client
 pnpm prisma generate
 
-## Jalankan Migration
+### Jalankan Migration
 pnpm prisma migrate dev
 
-## Jalankan Server
+### Jalankan Server
+```bash
 pnpm dev
+```
 
 ```
 open http://localhost:3000
