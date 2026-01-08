@@ -141,11 +141,13 @@ Hal ini mencegah data tidak valid masuk ke database.
 pnpm install
 ```
 ### Generate Prisma Client
+```bash
 pnpm prisma generate
-
+```
 ### Jalankan Migration
+```bash
 pnpm prisma migrate dev
-
+```
 ### Jalankan Server
 ```bash
 pnpm dev
