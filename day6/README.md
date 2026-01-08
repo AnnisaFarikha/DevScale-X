@@ -145,10 +145,9 @@ pnpm prisma generate
 
 ## Jalankan Migration
 pnpm prisma migrate dev
-```
+
 ## Jalankan Server
 pnpm dev
-```
 
 ```
 open http://localhost:3000
