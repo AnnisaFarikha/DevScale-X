@@ -39,6 +39,7 @@ model Event {
   description  String
   location     String
   dateTime     String
+  endDateTime  String?
   status       EventStatus    @default(UPCOMING)
   category     EventCategory  @default(SEMINAR)
   type         EventType      @default(OFFLINE)

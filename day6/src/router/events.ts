@@ -6,13 +6,13 @@ import {
   updateEventValidation,
   eventQueryValidation,
 } from "../validation/event-validation.js";
+import { calculateEventStatus } from "../utils/event-status.js";
 
 export const eventsRoute = new Hono()
   .get("/", zValidator("query", eventQueryValidation), async (c) => {
     const query = c.req.valid("query");
 
     const where: any = {};
-    if (query.status) where.status = query.status;
     if (query.category) where.category = query.category;
     if (query.type) where.type = query.type;
 
@@ -22,7 +22,16 @@ export const eventsRoute = new Hono()
         participants: true,
       },
     });
-    return c.json({ events });
+
+    let result = events.map((event) => ({
+      ...event,
+      status: calculateEventStatus(event.dateTime, event.endDateTime),
+    }));
+
+    if (query.status) {
+      result = result.filter((event) => event.status === query.status);
+    }
+    return c.json({ events: result });
   })
   .get("/:id", async (c) => {
     const id = c.req.param("id");
@@ -40,18 +49,26 @@ export const eventsRoute = new Hono()
       return c.json({ message: "Event not found" }, 404);
     }
 
-    return c.json({ event });
+    return c.json({
+      event: {
+        ...event,
+        status: calculateEventStatus(event.dateTime, event.endDateTime),
+      },
+    });
   })
   .post("/", zValidator("json", createEventValidation), async (c) => {
     const body = c.req.valid("json");
+
+    const start = new Date(body.dateTime);
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
 
     const newEvent = await prisma.event.create({
       data: {
         name: body.name,
         description: body.description,
         dateTime: body.dateTime,
+        endDateTime: end.toISOString(),
         location: body.location,
-        status: body.status || "UPCOMING",
         category: body.category || "SEMINAR",
         type: body.type || "OFFLINE",
       },
@@ -78,7 +95,6 @@ export const eventsRoute = new Hono()
         ...(body.description && { description: body.description }),
         ...(body.dateTime && { dateTime: body.dateTime }),
         ...(body.location && { location: body.location }),
-        ...(body.status && { status: body.status }),
         ...(body.category && { category: body.category }),
         ...(body.type && { type: body.type }),
       },
