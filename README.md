@@ -29,5 +29,5 @@ Repository ini dibuat untuk:
 
 ## Status
 
-🔴 **Inctive**  
+🔴 **Finished**  
 Bootcamp telah selesai.
