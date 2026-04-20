@@ -29,5 +29,5 @@ Repository ini dibuat untuk:
 
 ## Status
 
-🟢 **Active**  
-Repository ini akan terus diperbarui mengikuti jalannya bootcamp.
+🔴 **Inctive**  
+Bootcamp telah selesai.
